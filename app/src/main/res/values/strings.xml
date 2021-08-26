@@ -1,0 +1,43 @@
+<resources>
+    <string name="app_name">Sure Tips</string>
+<!--the native id is a native banner-->
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="app_ID">282656606620916</string>
+    <string name="native_Ad">282656606620916_282663483286895</string>
+    <string name="interstitial_Ad">282656606620916_282664396620137</string>+
+    <string name="banner_Ad">ca-app-pub-5043208762700605/7658198592</string>
+
+    <string name="About_App">App Version 1 : 1.0.1\n\nDeveloper: Best Tips.\n</string>
+    <string name="action_settings">Settings</string>
+    <string name="ad_attribution">Ad</string>
+    <string name="feedback">Feedback</string>
+    <string name="share">Share</string>
+    <string name="submit_feedback">Submit</string>
+    <string name="rate_us_please">Rate us please</string>
+    <string name="about">About app</string>
+    <string name="_23_june">date</string>
+    <string name="post">post</string>
+    <string name="post_time">time</string>
+    <string name="jackpot_predictions">Best Tips</string>
+    <string name="your_email_address">Email Address</string>
+    <string name="app_descrip">Developed and Designed by Snave.</string>
+    <string name="title_activity_index">Index</string>
+    <string name="telegram_channel">https://t.me/betikabets2021</string>
+    <string name="mail_feedback">snaveford@gmail.com</string>
+    <string name="url_app">market://details?id=com.odibetika</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="default_notification_channel_id">default</string>
+    <string name="resp_warning">REMEMBER – GAMBLE FOR THE FUN OF IT, NOT FOR THE MONEY. IF IT STOPS BEING FUN… STOP. \nFollow these four easy steps to make sure your gambling stays in control: \n1.  Set yourself time and money limits and stick to them; \n2.  Take frequent breaks; \n3.  Don\'t chase your losses – walk away; \n4.  Only spend what you can afford on gambling.</string>
+
+   <!--Real ADS-->
+    <string name="Mopub_Banner">8e02f3b8aea24f4f8542e01b443e2ddc</string>
+    <string name="Mopub_Int">0b2a6104a8394e39a5a5a3ab40068f00</string>
+
+    <!--Test ADS-->
+    <!--<string name="Mopub_Int">24534e1901884e398f1253216226017e</string>
+    <string name="Mopub_Banner">b195f8dd8ded45fe847ad89ed1d016da</string>
+-->
+</resources>

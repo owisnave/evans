@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "422667997197",
+    "project_id": "odi-bets-best-prediction",
+    "storage_bucket": "odi-bets-best-prediction.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:422667997197:android:9c997930263bc58ae0c544",
+        "android_client_info": {
+          "package_name": "com.odibetika"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "422667997197-ajigrg1i0qap2bk2qtcjk0hu4t2d1a3i.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCcDqLPDRsZv7Q2E-UYHysfCvORTCa4E0k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "422667997197-ajigrg1i0qap2bk2qtcjk0hu4t2d1a3i.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_dailytoptips"
+            android:title="Daily Picks" />
+    </group>
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_midweekjackpot"
+            android:title="Expert Tips" />
+
+
+    </group>
+
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_telegram"
+            android:title="Telegram Channel" />
+     </group>
+
+
+
+
+
+</menu>
