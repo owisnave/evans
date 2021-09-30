@@ -7,7 +7,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
 >
 
-    <com.mopub.mobileads.MoPubView
+    <!--<com.mopub.mobileads.MoPubView
         android:id="@+id/adview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -15,12 +15,19 @@
         android:layout_alignParentTop="true"
         app:moPubAdSize="match_view">
 
-    </com.mopub.mobileads.MoPubView>
+    </com.mopub.mobileads.MoPubView>-->
+
+    <FrameLayout
+        android:id="@+id/bannerContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:visibility="visible" />
 
 
     <TextView
         android:id="@+id/jp"
-        android:layout_below="@+id/adview"
+        android:layout_below="@+id/bannerContainer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Loading..." />
@@ -29,8 +36,7 @@
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/adview"
-
+        android:layout_below="@+id/bannerContainer"
         />
 
 

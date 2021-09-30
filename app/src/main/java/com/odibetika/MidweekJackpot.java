@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,13 +21,17 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
-import com.mopub.mobileads.MoPubView;
+import com.ironsource.mediationsdk.ISBannerSize;
+import com.ironsource.mediationsdk.IronSource;
+import com.ironsource.mediationsdk.IronSourceBannerLayout;
+import com.ironsource.mediationsdk.logger.IronSourceError;
+import com.ironsource.mediationsdk.sdk.BannerListener;
 
 
 public class MidweekJackpot extends Fragment {
 
 
-    private MoPubView moPubView;
+    //private MoPubView moPubView;
 
     View view;
     RecyclerView mRecyclerView;
@@ -41,29 +46,76 @@ public class MidweekJackpot extends Fragment {
         view = inflater.inflate(R.layout.fragment_tips, container, false);
 
 
-
-        mRecyclerView =  view.findViewById(R.id.recycler_view);
+        mRecyclerView = view.findViewById(R.id.recycler_view);
         mRecyclerView.setHasFixedSize(true);
         mDatabaseReference = FirebaseDatabase.getInstance().getReference().child("best").child("expert tips");
 
-        txtLoading =  view.findViewById(R.id.jp);
+        txtLoading = view.findViewById(R.id.jp);
 
 
         mLayoutManager = new LinearLayoutManager(getContext());
 
         mRecyclerView.setLayoutManager(mLayoutManager);
 
+
+
         //showNativeAd();
         displayRecycler();
 
+        IronSource.init(getActivity(), "10f8f8c8d", IronSource.AD_UNIT.BANNER);
+        IronSourceBannerLayout banner = IronSource.createBanner(getActivity(), ISBannerSize.BANNER);
+        final FrameLayout bannerContainer = view.findViewById(R.id.bannerContainer);
+        FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT,
+                FrameLayout.LayoutParams.WRAP_CONTENT);
+        bannerContainer.addView(banner, 0, layoutParams);
+        IronSource.loadBanner(banner);
+
+        banner.setBannerListener(new BannerListener() {
+            @Override
+            public void onBannerAdLoaded() {
+                // Called after a banner ad has been successfully loaded
+            }
+
+            @Override
+            public void onBannerAdLoadFailed(IronSourceError error) {
+                // Called after a banner has attempted to load an ad but failed.
+                /*runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        bannerContainer.removeAllViews();
+                    }
+                });*/
+            }
+
+            @Override
+            public void onBannerAdClicked() {
+                // Called after a banner has been clicked.
+            }
+
+            @Override
+            public void onBannerAdScreenPresented() {
+                // Called when a banner is about to present a full screen content.
+            }
+
+            @Override
+            public void onBannerAdScreenDismissed() {
+                // Called after a full screen content has been dismissed
+            }
+
+            @Override
+            public void onBannerAdLeftApplication() {
+                // Called when a user would be taken out of the application context.
+            }
+        });
+
+
         return view;
     }
-    public void showMopBanner(){
+   /* public void showMopBanner(){
         moPubView = view.findViewById(R.id.adview);
         moPubView.setAdUnitId(getString(R.string.Mopub_Banner)); // Enter your Ad Unit ID from www.mopub.com
         moPubView.loadAd();
-    }
-
+    }*/
 
 
     @Override
@@ -79,13 +131,13 @@ public class MidweekJackpot extends Fragment {
     public void onStart() {
         super.onStart();
         displayRecycler();
-        showMopBanner();
+        //showMopBanner();
         //showBanner();
     }
 
     public void displayRecycler() {
 
-        Query query = mDatabaseReference;
+        Query query = mDatabaseReference.limitToFirst(14);
 
         FirebaseRecyclerOptions<Model> options =
                 new FirebaseRecyclerOptions.Builder<Model>()
@@ -120,17 +172,18 @@ public class MidweekJackpot extends Fragment {
 
 
                     Intent adDetails = new Intent(v.getContext(), Post_Details.class);
-                    adDetails.putExtra("selection","expert tips");
+                    adDetails.putExtra("selection", "expert tips");
                     adDetails.putExtra("postKey", item_key);
                     startActivity(adDetails);
                 });
             }
+
             @Override
             public void onError(DatabaseError e) {
                 // Called when there is an error getting data. You may want to update
                 // your UI to display an error message to the user.
                 // ...
-                Toast.makeText(getActivity(), ""+e, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "" + e, Toast.LENGTH_SHORT).show();
                 //swipeRefreshLayout.setRefreshing(false);
 
             }
@@ -138,6 +191,7 @@ public class MidweekJackpot extends Fragment {
         adapter.startListening();
         mRecyclerView.setAdapter(adapter);
     }
+
 
     public static class ItemViewHolder extends RecyclerView.ViewHolder {
 
@@ -151,20 +205,20 @@ public class MidweekJackpot extends Fragment {
         }
 
         public void setTitle(String title) {
-            TextView tvTitle =  mView.findViewById(R.id.postTitle);
+            TextView tvTitle = mView.findViewById(R.id.postTitle);
             tvTitle.setText(title);
         }
 
         public void setPrice(String price) {
 
-            TextView txtPrice =  mView.findViewById(R.id.post);
+            TextView txtPrice = mView.findViewById(R.id.post);
             txtPrice.setText("" + price);
 
         }
 
         public void setTime(Long time) {
 
-            TextView txtTime =  mView.findViewById(R.id.postTime);
+            TextView txtTime = mView.findViewById(R.id.postTime);
             //long elapsedDays=0,elapsedWeeks = 0, elapsedHours=0,elapsedMin=0;
             long elapsedTime;
             long currentTime = System.currentTimeMillis();

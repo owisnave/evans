@@ -40,4 +40,9 @@
     <!--<string name="Mopub_Int">24534e1901884e398f1253216226017e</string>
     <string name="Mopub_Banner">b195f8dd8ded45fe847ad89ed1d016da</string>
 -->
+    <!--AdMob Test Ads-->
+    <string name="App_Id_AdMob">ca-app-pub-8260690073121266~5260440351</string>
+    <string name="Banners_Admob">ca-app-pub-8260690073121266/5708190587</string>
+    <string name="Interstitials_Admob">ca-app-pub-8260690073121266/6031979435</string>
+
 </resources>

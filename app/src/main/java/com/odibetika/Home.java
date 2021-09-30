@@ -6,14 +6,12 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -22,16 +20,14 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+
+import com.facebook.ads.AdSettings;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.messaging.FirebaseMessaging;
-import com.mopub.common.MoPub;
-import com.mopub.common.SdkConfiguration;
-import com.mopub.common.SdkInitializationListener;
-import com.mopub.mobileads.MoPubErrorCode;
-import com.mopub.mobileads.MoPubInterstitial;
-
-import java.util.Arrays;
-import java.util.List;
+import com.ironsource.mediationsdk.IronSource;
+import com.ironsource.mediationsdk.integration.IntegrationHelper;
+import com.ironsource.mediationsdk.logger.IronSourceError;
+import com.ironsource.mediationsdk.sdk.InterstitialListener;
 
 import hotchemi.android.rate.AppRate;
 import hotchemi.android.rate.OnClickButtonListener;
@@ -41,9 +37,8 @@ public class Home extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private boolean doubleBack = false;
-   // private static final String TAG ="FACEBOOK_ADS" ;
-    private MoPubInterstitial moPubInterstitial;
-
+    // private static final String TAG ="FACEBOOK_ADS" ;
+    //private MoPubInterstitial moPubInterstitial;
 
 
     @Override
@@ -52,21 +47,27 @@ public class Home extends AppCompatActivity
 
 
         setContentView(R.layout.activity_home);
-        Toolbar toolbar =  findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+      //  AdSettings.addTestDevice("0d45ac77-dfc9-4203-a2a4-a0f390245c25");
 
 
+        //IronSource.setInterstitialListener(mInterstitialListener);
+
+
+        IronSource.init(this, "10f8f8c8d");
+       // IntegrationHelper.validateIntegration(this);
 
         FirebaseMessaging.getInstance().subscribeToTopic("best");
 
-        DrawerLayout drawer =  findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView =  findViewById(R.id.nav_view);
+        NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
         displayView(R.id.nav_view);
@@ -75,12 +76,64 @@ public class Home extends AppCompatActivity
         moPubInterstitial.setInterstitialAdListener(this);*/
 
 
-        initializeMopubSDK();
+        //initializeMopubSDK();
+        IronSource.init(this, "10f8f8c8d", IronSource.AD_UNIT.INTERSTITIAL);
+        IronSource.setInterstitialListener(new InterstitialListener() {
+            /**
+             * Invoked when Interstitial Ad is ready to be shown after load function was called.
+             */
+            @Override
+            public void onInterstitialAdReady() {
+            }
+            /**
+             * invoked when there is no Interstitial Ad available after calling load function.
+             */
+            @Override
+            public void onInterstitialAdLoadFailed(IronSourceError error) {
+            }
+            /**
+             * Invoked when the Interstitial Ad Unit is opened
+             */
+            @Override
+            public void onInterstitialAdOpened() {
+            }
+            /*
+             * Invoked when the ad is closed and the user is about to return to the application.
+             */
+            @Override
+            public void onInterstitialAdClosed() {
+            }
+            /**
+             * Invoked when Interstitial ad failed to show.
+             * @param error - An object which represents the reason of showInterstitial failure.
+             */
+            @Override
+            public void onInterstitialAdShowFailed(IronSourceError error) {
+            }
+            /*
+             * Invoked when the end user clicked on the interstitial ad, for supported networks only.
+             */
+            @Override
+            public void onInterstitialAdClicked() {
+            }
+            /** Invoked right before the Interstitial screen is about to open.
+             *  NOTE - This event is available only for some of the networks.
+             *  You should NOT treat this event as an interstitial impression, but rather use InterstitialAdOpenedEvent
+             */
+            @Override
+            public void onInterstitialAdShowSucceeded() {
+            }
+        });
+
+        IronSource.loadInterstitial();
+
 
 
     }
 
-    private void initializeMopubSDK() {
+
+
+   /* private void initializeMopubSDK() {
         SdkConfiguration sdkConfiguration = new SdkConfiguration.Builder(getString(R.string.Mopub_Int))
                 .withLegitimateInterestAllowed(false)
                 .build();
@@ -97,8 +150,24 @@ public class Home extends AppCompatActivity
             }
         });
 
+    }*/
+
+    protected void onResume() {
+        super.onResume();
+        IronSource.onResume(this);
     }
 
+    protected void onPause() {
+        super.onPause();
+        IronSource.onPause(this);
+    }
+
+    @Override
+    protected void onStart() {
+        //loadAd();
+        IronSource.showInterstitial("Best_Interstitial");
+        super.onStart();
+    }
 
     @Override
     public void onBackPressed() {
@@ -150,7 +219,7 @@ public class Home extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-       Fragment frag= null;
+        Fragment frag = null;
         int id = item.getItemId();
         if (id == android.R.id.home) {
 
@@ -172,7 +241,7 @@ public class Home extends AppCompatActivity
             alert.show();
 
 
-        }else if (id == R.id.ppolicy) {
+        } else if (id == R.id.ppolicy) {
             AlertDialog.Builder alert = new AlertDialog.Builder(this);
             alert.setTitle("Privacy Policy");
 
@@ -225,15 +294,14 @@ public class Home extends AppCompatActivity
 
             alert.show();
 
-        }
-        else if (id == R.id.feedback) {
+        } else if (id == R.id.feedback) {
             startActivity(new Intent(Home.this, Feedback.class));
 
-        }else if (id == R.id.ppolicy) {
+        } else if (id == R.id.ppolicy) {
 
             View messageView = getLayoutInflater().inflate(R.layout.about, null, false);
 
-            TextView textView =  messageView.findViewById(R.id.about_credits);
+            TextView textView = messageView.findViewById(R.id.about_credits);
             TextView textView1 = messageView.findViewById(R.id.about_description);
             int defaultColor = textView.getResources().getColor(R.color.colorBlack);
             int defaultColor1 = textView1.getResources().getColor(R.color.colorBlack);
@@ -246,9 +314,7 @@ public class Home extends AppCompatActivity
             builder.setView(messageView);
             builder.create();
             builder.show();
-        }
-
-       else if (id == R.id.rate) {
+        } else if (id == R.id.rate) {
 
             Uri uri = Uri.parse("market://details?id=" + getPackageName());
             Intent intent = new Intent(Intent.ACTION_VIEW, uri);
@@ -278,7 +344,7 @@ public class Home extends AppCompatActivity
         int id = item.getItemId();
         displayView(id);
 
-        DrawerLayout drawer =  findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
@@ -287,6 +353,7 @@ public class Home extends AppCompatActivity
 
         Fragment fragment = null;
         String title = "";
+        //IronSource.showInterstitial("Best_Interstitial");
 
         switch (viewId) {
             case R.id.nav_dailytoptips:
@@ -318,93 +385,10 @@ public class Home extends AppCompatActivity
             getSupportActionBar().setTitle(title);
         }
 
-        DrawerLayout drawer =  findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
 
     }
 
-   /* @Override
-    public void onInterstitialLoaded(MoPubInterstitial moPubInterstitial) {
-        showInterstitial();
-        Log.i("MOPUB","ad loaoded");
-    }
-
-    @Override
-    public void onInterstitialFailed(MoPubInterstitial moPubInterstitial, MoPubErrorCode moPubErrorCode) {
-        Log.i("MOPUB","failed to load"+moPubErrorCode);
-    }
-
-    @Override
-    public void onInterstitialShown(MoPubInterstitial moPubInterstitial) {
-
-    }
-
-    @Override
-    public void onInterstitialClicked(MoPubInterstitial moPubInterstitial) {
-
-    }
-
-    @Override
-    public void onInterstitialDismissed(MoPubInterstitial moPubInterstitial) {
-
-    }
-    void showInterstitial(){
-        if(moPubInterstitial.isReady()){
-            moPubInterstitial.show();
-        }
-    }*/
-
-    void showInterstitial() {
-        moPubInterstitial.setInterstitialAdListener(new MoPubInterstitial.InterstitialAdListener() {
-            @Override
-            public void onInterstitialLoaded(MoPubInterstitial moPubInterstitial) {
-                if(moPubInterstitial.isReady()){
-                    moPubInterstitial.show();
-                } else {
-                    Log.i("MOPUB","ad is not ready");
-
-                }
-
-            }
-
-            @Override
-            public void onInterstitialFailed(MoPubInterstitial moPubInterstitial, MoPubErrorCode moPubErrorCode) {
-
-            }
-
-            @Override
-            public void onInterstitialShown(MoPubInterstitial moPubInterstitial) {
-
-            }
-
-            @Override
-            public void onInterstitialClicked(MoPubInterstitial moPubInterstitial) {
-
-            }
-
-            @Override
-            public void onInterstitialDismissed(MoPubInterstitial moPubInterstitial) {
-
-            }
-        });
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        MoPub.onPause(this);
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        MoPub.onStop(this);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        MoPub.onResume(this);
-    }
 
 }

@@ -6,15 +6,13 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -23,30 +21,30 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.ironsource.mediationsdk.ISBannerSize;
+import com.ironsource.mediationsdk.IronSource;
+import com.ironsource.mediationsdk.IronSourceBannerLayout;
+import com.ironsource.mediationsdk.logger.IronSourceError;
+import com.ironsource.mediationsdk.sdk.BannerListener;
+import com.ironsource.mediationsdk.sdk.InterstitialListener;
 import com.luseen.autolinklibrary.AutoLinkMode;
 import com.luseen.autolinklibrary.AutoLinkTextView;
-import com.mopub.mobileads.MoPubErrorCode;
-import com.mopub.mobileads.MoPubInterstitial;
-import com.mopub.mobileads.MoPubView;
-
-import static android.content.ContentValues.TAG;
-import static com.mopub.common.Constants.TEN_SECONDS_MILLIS;
 
 //import com.google.android.gms.ads.AdView;
 
 public class Post_Details extends AppCompatActivity {
 
 
+
     DatabaseReference mRef;
     String postKey;
     TextView tvTitle, tvBody, tvTime;
-    private MoPubView moPubView;
-    private MoPubInterstitial moPubInterstitial;
+    /*private MoPubView moPubView;
+    private MoPubInterstitial moPubInterstitial;*/
     ImageView imgBody;
     ProgressDialog pd;
     String selection;
     AutoLinkTextView autoLinkTextView, autoLinkTextView2;
-
 
 
     @Override
@@ -62,20 +60,24 @@ public class Post_Details extends AppCompatActivity {
 
 
         postKey = getIntent().getExtras().getString("postKey");
-        selection=getIntent().getExtras().getString("selection");
-        tvBody =  findViewById(R.id.tvBody);
-        tvTitle =  findViewById(R.id.tvTitle);
-        tvTime =  findViewById(R.id.post_time);
-        imgBody =  findViewById(R.id.imgBody);
-        pd=new ProgressDialog(this);
+        selection = getIntent().getExtras().getString("selection");
+        tvBody = findViewById(R.id.tvBody);
+        tvTitle = findViewById(R.id.tvTitle);
+        tvTime = findViewById(R.id.post_time);
+        imgBody = findViewById(R.id.imgBody);
+        pd = new ProgressDialog(this);
         pd.setMessage("Loading...");
         pd.show();
 
-        moPubInterstitial = new MoPubInterstitial(this, getString(R.string.Mopub_Int));
+      /*  moPubInterstitial = new MoPubInterstitial(this, getString(R.string.Mopub_Int));
         // Remember that "this" refers to your current activity.
         //moPubInterstitial.setInterstitialAdListener(this);
         moPubInterstitial.load();
-       showInterstitial();
+       showInterstitial();*/
+        /*mAdView = findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);*/
+
 
         autoLinkTextView = findViewById(R.id.autoLinkrate);
         autoLinkTextView.addAutoLinkMode(AutoLinkMode.MODE_CUSTOM);
@@ -93,8 +95,8 @@ public class Post_Details extends AppCompatActivity {
                     Intent RateIntent =
                             new Intent("android.intent.action.VIEW", Uri.parse("market://details?id=com.snave.besttips"));
                     startActivity(RateIntent);
-                }catch (Exception e){
-                    Toast.makeText(getApplicationContext(),"Unable to connect try again later...",
+                } catch (Exception e) {
+                    Toast.makeText(getApplicationContext(), "Unable to connect try again later...",
                             Toast.LENGTH_SHORT).show();
                     e.printStackTrace();
                 }
@@ -106,8 +108,8 @@ public class Post_Details extends AppCompatActivity {
                     Intent RateIntent =
                             new Intent("android.intent.action.VIEW", Uri.parse("https://t.me/betikabets2021"));
                     startActivity(RateIntent);
-                }catch (Exception e){
-                    Toast.makeText(getApplicationContext(),"Unable to connect try again later...",
+                } catch (Exception e) {
+                    Toast.makeText(getApplicationContext(), "Unable to connect try again later...",
                             Toast.LENGTH_SHORT).show();
                     e.printStackTrace();
                 }
@@ -138,8 +140,8 @@ public class Post_Details extends AppCompatActivity {
                 if (time != null) {
                     setTime(time);
                 }
-                if (dataSnapshot.hasChild("image")){
-                    String image= (String) dataSnapshot.child("image").getValue();
+                if (dataSnapshot.hasChild("image")) {
+                    String image = (String) dataSnapshot.child("image").getValue();
 
                 }
 
@@ -152,21 +154,111 @@ public class Post_Details extends AppCompatActivity {
             }
         });
 
-        showMopBanner();
 
-    }
+        IronSource.init(this, "10f8f8c8d", IronSource.AD_UNIT.BANNER);
+        IronSourceBannerLayout banner = IronSource.createBanner(this, ISBannerSize.BANNER);
+        final FrameLayout bannerContainer = findViewById(R.id.bannerContainer);
+        FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT,
+                FrameLayout.LayoutParams.WRAP_CONTENT);
+        bannerContainer.addView(banner, 0, layoutParams);
 
-    public void showMopBanner(){
-        moPubView = findViewById(R.id.adview);
-        moPubView.setAdUnitId(getString(R.string.Mopub_Banner)); // Enter your Ad Unit ID from www.mopub.com
-        moPubView.loadAd();
+        banner.setBannerListener(new BannerListener() {
+            @Override
+            public void onBannerAdLoaded() {
+                // Called after a banner ad has been successfully loaded
+            }
+
+            @Override
+            public void onBannerAdLoadFailed(IronSourceError error) {
+                // Called after a banner has attempted to load an ad but failed.
+                /*runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        bannerContainer.removeAllViews();
+                    }
+                });*/
+            }
+
+            @Override
+            public void onBannerAdClicked() {
+                // Called after a banner has been clicked.
+            }
+
+            @Override
+            public void onBannerAdScreenPresented() {
+                // Called when a banner is about to present a full screen content.
+            }
+
+            @Override
+            public void onBannerAdScreenDismissed() {
+                // Called after a full screen content has been dismissed
+            }
+
+            @Override
+            public void onBannerAdLeftApplication() {
+                // Called when a user would be taken out of the application context.
+            }
+        });
+
+        IronSource.loadBanner(banner);
+
+        IronSource.init(this, "10f8f8c8d", IronSource.AD_UNIT.INTERSTITIAL);
+        IronSource.loadInterstitial();
+        IronSource.setInterstitialListener(new InterstitialListener() {
+            @Override
+            public void onInterstitialAdReady() {
+
+            }
+
+            @Override
+            public void onInterstitialAdLoadFailed(IronSourceError ironSourceError) {
+
+            }
+
+            @Override
+            public void onInterstitialAdOpened() {
+
+            }
+
+            @Override
+            public void onInterstitialAdClosed() {
+
+            }
+
+            @Override
+            public void onInterstitialAdShowSucceeded() {
+
+            }
+
+            @Override
+            public void onInterstitialAdShowFailed(IronSourceError ironSourceError) {
+
+            }
+
+            @Override
+            public void onInterstitialAdClicked() {
+
+            }
+        });
+
+        //IronSource.showInterstitial("Best_Interstitial");
+
+
     }
 
 
 
     @Override
-    public void onBackPressed() {
+    protected void onStart() {
+        //loadAd();
+        IronSource.showInterstitial("Best_Interstitial");
+        super.onStart();
+    }
 
+
+    @Override
+    public void onBackPressed() {
+        IronSource.showInterstitial("Best_Interstitial");
         finish();
     }
 
@@ -175,6 +267,7 @@ public class Post_Details extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.home, menu);
         return true;
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
@@ -183,7 +276,7 @@ public class Post_Details extends AppCompatActivity {
             loadIntAdd();*/
             //showInterstitials();
             finish();
-        } else if (id == R.id.about){
+        } else if (id == R.id.about) {
             AlertDialog.Builder alert = new AlertDialog.Builder(this);
             alert.setTitle("Best Predictions");
             try {
@@ -209,7 +302,7 @@ public class Post_Details extends AppCompatActivity {
                 Toast.makeText(Post_Details.this, "Unable to find play store", Toast.LENGTH_SHORT).show();
             }
 
-        }else if (id == R.id.ppolicy) {
+        } else if (id == R.id.ppolicy) {
             AlertDialog.Builder alert = new AlertDialog.Builder(this);
             alert.setTitle("Privacy Policy");
             try {
@@ -315,7 +408,7 @@ public class Post_Details extends AppCompatActivity {
 
     }
 
-    void showInterstitial() {
+  /*  void showInterstitial() {
         moPubInterstitial.setInterstitialAdListener(new MoPubInterstitial.InterstitialAdListener() {
             @Override
             public void onInterstitialLoaded(MoPubInterstitial moPubInterstitial) {
@@ -349,4 +442,7 @@ public class Post_Details extends AppCompatActivity {
             }
         });
     }
+*/
+
+
 }
